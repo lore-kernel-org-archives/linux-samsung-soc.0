@@ -1,62 +1,63 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.241.56.152
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795873903;
-	b=qWDb4YTQVyPddvNDlRi1t0B6weVsH2XT9N3ZcxlUvTpaPcMMpXZjC3GG4TIsQO8kDWjt
-	 +fqfC8EdMwehay43az9L+9PBe3GaI7ugCt5YhS9dTfwT8ns9vQ4wUV2YcbwJFI7ZAI/uK
-	 ybvb/8rSEtQUnXHe4LvchHicYW9CWo54PinHSdy8MMqx+EIgZ/hm/zo5jvPy2Hj9zLNXI
-	 PbxVwdRy2VEPpcJ/H1uyWr+F03OjKmvcSl9/Q3wSN3SP7mALQCUxe7Nvz1CPz7BhXHEJX
-	 x4XPHc83OzhTVp/kxlibO5S9MNFXWPU5/rVcjQaAOSDFm6vGLteMMDsC0OL7b7uKang==
+	t=1795873908;
+	b=nStdO669TVz5pgqKSWdYPw0nraKTg/FeMdgRhIRwzvAc6EQjC80pXs7I+ESSAwz+66c4
+	 ksAuwdWMfLwBqUw8hOKpnqD7tuPMe8DHeRF2eh+Gq8FWQ6c5ibSzzevnDUkJZlCOpdlUR
+	 E2sY66hNEhBqR9hzXiQn1vTz27d5adNfnLPAWJrVGJ6M1bHCWAdusW0Rgv9qYFzt+qzou
+	 IcG00BmX0oUt7b4RbVGY5ZrGYUwppzGKDKXUvuA3qTzkvRvd40CYtT+jjIZ4D8C7L5ZFZ
+	 JtkBkWxP240cbeK6lAxjCOw7LZKS4NXTCWGfDv+2oslg+t6G//t+WldycYfYKbgRLZQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795873903;
-	h=DMARC-Filter:Received:DKIM-Signature:From:Subject:Date:Message-Id:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
-	 X-Change-ID:To:Cc:X-Mailer:X-Rspamd-Queue-Id;
-	bh=2a+Yri10/zFE3o9wz8FYNDHmwFSDAaf5+qNG/L9KbRg=;
-	b=zTuCRJOit4lysj34OF2e7GDm4IcWrgVMAhR3TKI0dXNEJLD+lMSgepWDApyN6AoyQYk/
-	 nXjdkvqOcUcO5Yd917ndI/ADQpjkSCB78qsW3RpAV0VR+oWu/w7trpK73dtOEF6NGG8v9
-	 70pTQ4U+toWYEetjC+3rjLiFJCsja8RxcfoJxi/abm/2UXgpo+Xu07E0p5cD9UeHBzbQC
-	 d12OSzElTdOH6ZaFWt2mgCPumDJDFg4EfoFoho2FIaYZ5kkHiLatSmGJdvCffpU0nOH1Q
-	 fcx/CI5jgAXyqmZ+ob2xhEZ9aGD7H6/7kchHpMxZ+dsSVBTrY8IsPQxKFmdIrMu7K6Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795873908;
+	h=DMARC-Filter:Received:DKIM-Signature:From:Date:Subject:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
+	 In-Reply-To:To:Cc:X-Mailer:X-Rspamd-Queue-Id;
+	bh=rxp+ojsSYP6df0Xl+X5RYTP1fM0f6afciX8XTYdpT1E=;
+	b=pG+OkMp/QClrStmf0WY20sgUTGGV/2lhA/iq3/V9Ww4wcX8BZfDwnvYYxNsusm3Ojltw
+	 S1+LlHPVD45HVxz8emjrle5CUb6UeUI/AY0Bc/n0bFKFx3y0LtkjkTkXY+av6p1T/el5O
+	 W7sq/yvivuKNXJOwUhGJ7SSaDRCOra7aSk4R/c6We+BlYRQh6xukZ+swtcrYFSvZEbGYS
+	 IXLudao1AbuY1VwN6O22UCeaJuKyrdaZJR82Ps5Fjn3Tbr8nMtOSxKYO2pdVMbHQUHHJA
+	 9cI0tZmSnW24NxFTHIT+ECYz3uCZLaTvJ6MIv/LCbHzd6JEppnqOfDYh9kt8+RlWuEw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=timmermann.space;
 	spf=pass smtp.mailfrom=timmermann.space;
-	dkim=pass header.d=timmermann.space header.i=@timmermann.space header.a=rsa-sha256 header.s=MBO0001 header.b=vuVekJQ6;
-	arc=none smtp.remote-ip=80.241.56.151
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass header.d=timmermann.space header.i=@timmermann.space header.a=rsa-sha256 header.s=MBO0001 header.b=JfvaIfrc;
+	arc=none smtp.remote-ip=80.241.56.152
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC96C606A31C;
-	Sat, 28 Nov 2026 13:51:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AC96C606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80518606A337;
+	Sat, 28 Nov 2026 13:51:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 80518606A337
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=timmermann.space
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timmermann.space
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=timmermann.space header.i=@timmermann.space header.a=rsa-sha256 header.s=MBO0001 header.b=vuVekJQ6
+	dkim=pass (2048-bit key, unprotected) header.d=timmermann.space header.i=@timmermann.space header.a=rsa-sha256 header.s=MBO0001 header.b=JfvaIfrc
 Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4jcBXW1CdMz8tH9;
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4jcBXW6sbQzKp25;
 	Sat, 28 Nov 2026 14:51:39 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=timmermann.space;
 	s=MBO0001; t=1795873899;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=2a+Yri10/zFE3o9wz8FYNDHmwFSDAaf5+qNG/L9KbRg=;
-	b=vuVekJQ64sop22dz12YCBiw5cfW3TvTYZnX8Q0AL616Xp0OjwpByoeYPUcnfigAAyLD/CU
-	IwGoMtQIflxO29oAmD8Mcnruzg5PSLc0HYPDJV395jxfEQYJ9W6uhDNSPaXgdVprdu8HYi
-	IfYRhK8L4LFOvay+ZvOM12mSWeLshbijlNonSefhRABzibODqOAXfsLqcUnuFXdFsziNvI
-	HfI6aF0afY4c9iW+7iB4X4THIB2/8BD+wTUcqLKqXwZ9mMVqoOlytfCTF8nKAwqfn0R82+
-	T7rdnOj7V5F39TB9V+d1+XDY6J136L2ZQiRSmvUDuOLBERW5F6tTlrnAidhoQA==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rxp+ojsSYP6df0Xl+X5RYTP1fM0f6afciX8XTYdpT1E=;
+	b=JfvaIfrcj2TigiUqVR1TG8CiMZlJZWNqdm9Ujp0NakY909O53e19zPQ81j/Yy+u2JEhRhF
+	taLyxrThwK94t2tOp5z/W7u3BErWPRch4jW+toVKK/9pOtGkmTn3rO1SJLcglMnGYZTqfH
+	uacssl/Hb3wG9nYWMw3On1Llzua3//FzPtRPjrxP0g3gYMVp6hFBPuV+MI6LjNdFxoF3gS
+	3d64uL34DhBwLF8PnbLhbQ74BNuw31lowkWmAiI3i8cWbA5rrd9xVpySRci91PbVrIwHIY
+	WPtYMP4r6KgA+OIaBxZHzt9TuJaEywlsmls+SURdB6FilCcNWnfz6Q3zqYooxw==
 Authentication-Results: outgoing_mbo_mout;
 	dkim=none;
 	spf=pass (outgoing_mbo_mout: domain of foss@timmermann.space designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=foss@timmermann.space
 From: Lukas Timmermann <foss@timmermann.space>
-Subject: [PATCH v2 0/7] Input: s6sy761 - add SPI support for the S6SY791
-Date: Sat, 28 Nov 2026 14:51:27 +0100
-Message-Id: <20261128-lat3st-google-raven-touch-upstream-v2-0-1be5c1029087@timmermann.space>
+Date: Sat, 28 Nov 2026 14:51:28 +0100
+Subject: [PATCH v2 1/7] dt-bindings: input: touchscreen: samsung,s6sy761:
+ Add S6SY791 and reset GPIO
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -67,12 +68,10 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/5WOQQ6CMBBFr2K6dgxTg0ldeQ/DopQp1NCWdEqjI
- dxdwBO4fMnLf38RTMkRi/tpEYmKYxfDBvJ8EmbQoSdw3cZCVvKGFSKMOl85Qx9jPxIkXShAjrM
- ZYJ44J9IeLCptOpRopRHb0JTIuvcReTY/5rl9kcn78m4MjnNMn+NFwd37K1gQKpBa2brGWrWKH
- tl5T8nrEC48aUOiWdf1C4JvBBrtAAAA
-X-Change-ID: 20261011-lat3st-google-raven-touch-upstream-f19acd121f2c
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261128-lat3st-google-raven-touch-upstream-v2-1-1be5c1029087@timmermann.space>
+References: <20261128-lat3st-google-raven-touch-upstream-v2-0-1be5c1029087@timmermann.space>
+In-Reply-To: <20261128-lat3st-google-raven-touch-upstream-v2-0-1be5c1029087@timmermann.space>
 To: Lukas Timmermann <foss@timmermann.space>, 
  Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -85,82 +84,102 @@ Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-samsung-soc@vger.kernel.org
 X-Mailer: b4 0.15.2
-X-Rspamd-Queue-Id: 4jcBXW1CdMz8tH9
+X-Rspamd-Queue-Id: 4jcBXW6sbQzKp25
 
-This series adds SPI support to S6SY761 touch controllers, specifically
-S6SY791 devices. Also included are the necessary adjustments in the DTS
-for the Google Pixel 6 Pro (raven) which uses the aforementioned SPI
-version. As the mentioned board has a reset line wired, I also added that
-functionality to the bindings and driver. To implement SPI versions
-cleanly, the driver was split into core and bus transfer modules like
-seen in other drivers.
+S6SY791 is the SPI-based counterpart of S6SY761. The register map and
+commands are identical for the subset the kernel currently implements.
+Therefore add S6SY791 as a related touch controller.
 
-This series was successfully tested with a Google Pixel 6 Pro. The I2C
-transfer part was untested because I don't have a device with an
-S6SY761 controller.
+Optionally, the reset line can be controlled on some boards,
+such as the Google Pixel 6 Pro (raven).
 
-Known issue: on gs101 the touchscreen probe at boot fails with -EIO
-because the very first SPI transfer is not understood by the controller
-(the reply is all zeros); rebinding the driver works. This looks like
-spi-s3c64xx applying CPOL/CPHA only in transfer_one(), after chip
-select has been asserted, but I have not verified this further. It is
-not addressed by this series.
+Also reference spi-peripheral-props for the SPI bus properties.
 
-Patches 1-4 and 7 are meant for the input tree, patches 5-6 for the
-Samsung SoC tree. The DTS patches depend on the binding in patch 1.
-
+Signed-off-by: Lukas Timmermann <foss@timmermann.space>
 ---
-Changes in v2:
-- Reworked dt-bindings to require properties for SPI variants
-- Fixed I²C variants having SPI properties allowed
-- Don't wait for devices without reset gpio to come out of reset
-  anymore
-- Remove includes of linux/mod_devicetable.h
-- Cleaned up array initialization around of_ids
-- Link to v1: https://patch.msgid.link/20261011-lat3st-google-raven-touch-upstream-v1-0-2a9f55159b9e@timmermann.space
+ .../input/touchscreen/samsung,s6sy761.yaml         | 51 +++++++++++++++++++++-
+ 1 file changed, 50 insertions(+), 1 deletion(-)
 
-To: Lukas Timmermann <foss@timmermann.space>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Conor Dooley <conor+dt@kernel.org>
-To: Andi Shyti <andi.shyti@kernel.org>
-To: Peter Griffin <peter.griffin@linaro.org>
-To: André Draszik <andre.draszik@linaro.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-input@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/samsung,s6sy761.yaml b/Documentation/devicetree/bindings/input/touchscreen/samsung,s6sy761.yaml
+index 1ffd17af3c53..d7a116b04f41 100644
+--- a/Documentation/devicetree/bindings/input/touchscreen/samsung,s6sy761.yaml
++++ b/Documentation/devicetree/bindings/input/touchscreen/samsung,s6sy761.yaml
+@@ -8,13 +8,31 @@ title: Samsung S6SY761 touchscreen controller
+ 
+ maintainers:
+   - Andi Shyti <andi.shyti@kernel.org>
++  - Lukas Timmermann <foss@timmermann.space>
+ 
+ allOf:
+   - $ref: touchscreen.yaml#
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,s6sy791
++    then:
++      allOf:
++        - $ref: /schemas/spi/spi-peripheral-props.yaml#
++        - required:
++            - spi-cpha
++            - spi-cpol
++    else:
++      properties:
++        spi-cpha: false
++        spi-cpol: false
+ 
+ properties:
+   compatible:
+-    const: samsung,s6sy761
++    enum:
++      - samsung,s6sy761
++      - samsung,s6sy791
+ 
+   reg:
+     maxItems: 1
+@@ -22,6 +40,16 @@ properties:
+   interrupts:
+     maxItems: 1
+ 
++  spi-cpha:
++    type: boolean
++
++  spi-cpol:
++    type: boolean
++
++  reset-gpios:
++    maxItems: 1
++    description: GPIO connected to the reset pin of the controller
++
+   avdd-supply: true
+   vdd-supply: true
+ 
+@@ -52,3 +80,24 @@ examples:
+             touchscreen-size-y = <4096>;
+         };
+     };
++
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++    spi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        touchscreen@0 {
++            compatible = "samsung,s6sy791";
++            reg = <0>;
++            spi-max-frequency = <10000000>;
++            spi-cpol;
++            spi-cpha;
++            interrupt-parent = <&gpa9>;
++            interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++            reset-gpios = <&gpp26 0 GPIO_ACTIVE_LOW>;
++            avdd-supply = <&ldo26_reg>;
++            vdd-supply = <&ldo25_reg>;
++        };
++    };
 
----
-Lukas Timmermann (7):
-      dt-bindings: input: touchscreen: samsung,s6sy761: Add S6SY791 and reset GPIO
-      Input: s6sy761 - split into core and I2C modules
-      Input: s6sy761 - add reset GPIO support
-      Input: s6sy761 - add SPI support for S6SY791
-      arm64: dts: exynos: gs101-pixel-common: add labels for touchscreen supplies
-      arm64: dts: exynos: gs101-raven: add S6SY791 touchscreen
-      MAINTAINERS: add entry for Samsung S6SY761 touchscreen driver
-
- .../input/touchscreen/samsung,s6sy761.yaml         |  51 ++++-
- MAINTAINERS                                        |   7 +
- .../boot/dts/exynos/google/gs101-pixel-common.dtsi |   4 +-
- arch/arm64/boot/dts/exynos/google/gs101-raven.dts  |  50 +++++
- drivers/input/touchscreen/Kconfig                  |  20 +-
- drivers/input/touchscreen/Makefile                 |   4 +-
- .../touchscreen/{s6sy761.c => s6sy761_core.c}      | 228 ++++++++++-----------
- drivers/input/touchscreen/s6sy761_core.h           |  34 +++
- drivers/input/touchscreen/s6sy761_i2c.c            | 111 ++++++++++
- drivers/input/touchscreen/s6sy761_spi.c            | 171 ++++++++++++++++
- 10 files changed, 548 insertions(+), 132 deletions(-)
----
-base-commit: 56beabeaf17aaf9acc6afc6d6d21ea28d8f67797
-change-id: 20261011-lat3st-google-raven-touch-upstream-f19acd121f2c
-
-Best regards,
---  
-Lukas Timmermann <foss@timmermann.space>
+-- 
+2.56.1
 
